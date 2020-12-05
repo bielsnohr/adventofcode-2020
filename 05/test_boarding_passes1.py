@@ -1,6 +1,6 @@
 import pytest
 from boarding_passes1 import (calculate_seat_id, calculate_row,
-                              calculate_column, binary_search)
+                              calculate_column, binary_search, find_open_seat)
 
 
 @pytest.mark.parametrize("boarding_pass, expected_seat_id",
@@ -29,3 +29,7 @@ def test_calculate_column(column_segment, expected_column):
                            ('101', [0, 7], 5)])
 def test_binary_search(instructions, range, expected):
     assert binary_search(instructions, range) == expected
+
+def test_find_open_seat():
+    seat_ids = [10, 4, 9, 5, 7, 6]
+    assert find_open_seat(seat_ids) == 8

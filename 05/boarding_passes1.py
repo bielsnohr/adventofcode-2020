@@ -40,15 +40,24 @@ def calculate_seat_id(boarding_pass):
 
     return seat_id
 
+def find_open_seat(seat_ids):
+    seat_ids = sorted(seat_ids)
+    open_seat = None
+    for i in range(1, len(seat_ids)):
+        if seat_ids[i] - seat_ids[i - 1] == 2:
+            open_seat = seat_ids[i] - 1
+
+    return open_seat
+
 
 def main(input_file='input1.txt'):
-    max_seat_id = 0
+    seat_ids = []
     with open(input_file) as input:
         for boarding_pass in input:
-            max_seat_id = max(max_seat_id, calculate_seat_id(boarding_pass))
+            seat_ids.append(calculate_seat_id(boarding_pass))
 
-    print(max_seat_id)
-
+    print("Maximum seat id: ", max(seat_ids))
+    print("Open seat: ", find_open_seat(seat_ids))
 
 
 if __name__ == '__main__':
@@ -56,4 +65,3 @@ if __name__ == '__main__':
         main(input_file=sys.argv[1])
     else:
         main()
-
