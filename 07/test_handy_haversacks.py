@@ -1,6 +1,6 @@
 import pytest
 from handy_haversacks import (search_for_gold, count_valid_colours,
-                              collect_bag_rules)
+                              collect_bag_rules, count_internal_bags)
 
 
 @pytest.fixture
@@ -20,9 +20,9 @@ def rules():
     ('bright white', True), ('muted yellow', True),
     ('dark orange', True), ('light red', True),
     ('dark olive', False), ('vibrant plum', False),
-    ('shiny gold', False), ('faded blue', False),
+    ('shiny gold', False), ('faded blue', False)
 ])
-def test_count_yes_in_group(rules, colour, contains_gold):
+def test_search_for_gold(rules, colour, contains_gold):
     assert search_for_gold(colour, rules) == contains_gold
 
 
@@ -32,3 +32,11 @@ def test_count_valid_colours(rules):
 
 def test_collect_bag_rules(rules):
     assert collect_bag_rules('test_input.txt') == rules
+
+
+@pytest.mark.parametrize("input_file, bag_count", [
+    ('test_input.txt', 32), ('test_input2.txt', 126)
+])
+def test_count_internal_bags(input_file, bag_count):
+    rules = collect_bag_rules(input_file)
+    assert count_internal_bags('shiny gold', rules) == bag_count

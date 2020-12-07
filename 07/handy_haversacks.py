@@ -3,6 +3,19 @@ import sys
 import re
 
 
+def count_internal_bags(colour, rules):
+    bag_count = 0
+    if rules[colour] == {}:
+        bag_count = 0
+    else:
+        for sub_colour, count in rules[colour].items():
+            bag_count += count * (1 + count_internal_bags(sub_colour, rules))
+    return bag_count
+
+
+# TODO this could be optimised through some "dynamic" programming by storing
+# the colours which we know have gold underneath them, such that when we search
+# these colours sitting under other colours, we can immediately return true
 def search_for_gold(colour, rules):
     contains_gold = False
     sub_colours = rules[colour].keys()
@@ -45,6 +58,8 @@ def main(input_file='input.txt'):
     rules = collect_bag_rules(input_file)
     print('Number of colours that contain shiny gold: ',
           count_valid_colours(rules))
+    print('Number of bags within shiny gold: ',
+          count_internal_bags('shiny gold', rules))
 
 
 if __name__ == '__main__':
