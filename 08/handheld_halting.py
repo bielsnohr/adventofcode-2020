@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import sys
+# TODO there is a lot of repeated code in this module and it could do with a
+# design rethink
 
 
 def execute_boot_code(boot_code):
@@ -54,10 +56,6 @@ def does_boot_code_complete(boot_code):
     return (code_completes, accumulator)
 
 
-# TODO incorrect logic: fixing the last instruction that sends you to a
-# previously visited instruction does not necessarily get you out of the
-# infinite loop. The easy correct is to brute for every possible swap from
-# 'jmp' <-> 'nop' (but only doing one at a time)
 def fix_boot_code(boot_code):
     swap_comms = {'nop': 'jmp', 'jmp': 'nop'}
 
