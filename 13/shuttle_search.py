@@ -18,16 +18,29 @@ def check_valid_timestamp(timestamp, bus_listing):
 
 
 def find_earliest_timestamp(bus_listing, start_point=0):
-    first_id = parse_bus_times(bus_listing)[0]
-    count = start_point // first_id
+    max_id, offset = find_max_and_index(bus_listing)
+    count = start_point // max_id
     while True:
-        timestamp = count * first_id
+        timestamp = count * max_id - offset
         print(timestamp)
         if check_valid_timestamp(timestamp, bus_listing):
             return timestamp
         else:
             count += 1
 
+
+def find_max_and_index(bus_listing):
+    masked_listing = [int_mask(id) for id in bus_listing.split(',')]
+    max_id = max(masked_listing)
+    return (max_id, masked_listing.index(max_id))
+
+
+def int_mask(s):
+    try:
+        int_mask = int(s)
+    except ValueError:
+        int_mask = 0
+    return int_mask
 
 
 def multiply_bus_id_and_wait_time(earliest_departure, bus_ids):
@@ -61,7 +74,7 @@ def main(input_file='input.txt'):
           multiply_bus_id_and_wait_time(earliest_departure,
                                         parse_bus_times(bus_ids)))
     print('Earliest valid timestamp (part 2): ',
-          find_earliest_timestamp(bus_ids, start_point=100000000000000))
+          find_earliest_timestamp(bus_ids, start_point=0))
 
 
 if __name__ == '__main__':
