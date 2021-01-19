@@ -1,6 +1,6 @@
 import pytest
 from shuttle_search import (multiply_bus_id_and_wait_time, parse_bus_times,
-                            check_valid_timestamp)
+                            check_valid_timestamp, find_earliest_timestamp)
 
 
 earliest_departure = 939
@@ -16,6 +16,25 @@ def test_parse_bus_times():
     assert parse_bus_times(bus_listing) == bus_ids
 
 
-@pytest.parametrize("timestamp, bus_ids", [])
-def test_check_valid_timestamp():
-    pass
+@pytest.mark.parametrize("timestamp, bus_listing", [
+    (3417, '17,x,13,19'), (754018, '67,7,59,61'), (779210, '67,x,7,59,61'),
+    (1261476, '67,7,x,59,61'), (1202161486, '1789,37,47,1889')
+])
+def test_check_valid_timestamp(timestamp, bus_listing):
+    assert check_valid_timestamp(timestamp, bus_listing)
+
+
+@pytest.mark.parametrize("timestamp, bus_listing", [
+    (417, '17,x,13,19'), (54018, '67,7,59,61'), (79210, '67,x,7,59,61'),
+    (1261473, '67,7,x,59,61'), (122161486, '1789,37,47,1889')
+])
+def test_check_invalid_timestamp(timestamp, bus_listing):
+    assert check_valid_timestamp(timestamp, bus_listing) is False
+
+
+@pytest.mark.parametrize("timestamp, bus_listing", [
+    (3417, '17,x,13,19'), (754018, '67,7,59,61'), (779210, '67,x,7,59,61'),
+    (1261476, '67,7,x,59,61'), (1202161486, '1789,37,47,1889')
+])
+def test_find_earliest_timestamp(timestamp, bus_listing):
+    assert find_earliest_timestamp(bus_listing) == timestamp
