@@ -17,30 +17,19 @@ def check_valid_timestamp(timestamp, bus_listing):
     return True
 
 
-def find_earliest_timestamp(bus_listing, start_point=0):
-    max_id, offset = find_max_and_index(bus_listing)
-    count = start_point // max_id
-    while True:
-        timestamp = count * max_id - offset
-        print(timestamp)
-        if check_valid_timestamp(timestamp, bus_listing):
-            return timestamp
-        else:
-            count += 1
+def find_earliest_timestamp(bus_listing):
+    bus_listing = get_bus_times_and_offsets(bus_listing)
+    x, incr = bus_listing[0]
 
-
-def find_max_and_index(bus_listing):
-    masked_listing = [int_mask(id) for id in bus_listing.split(',')]
-    max_id = max(masked_listing)
-    return (max_id, masked_listing.index(max_id))
-
-
-def int_mask(s):
-    try:
-        int_mask = int(s)
-    except ValueError:
-        int_mask = 0
-    return int_mask
+    # sieve method for Chinese Remainder Theorem
+    for offset, bus in bus_listing[1:]:
+        while True:
+            if x % bus == offset:
+                incr *= bus
+                break
+            else:
+                x += incr
+    return x
 
 
 def multiply_bus_id_and_wait_time(earliest_departure, bus_ids):
@@ -56,6 +45,12 @@ def multiply_bus_id_and_wait_time(earliest_departure, bus_ids):
 
 def parse_bus_times(bus_listing):
     return [int(id) for id in bus_listing.split(',') if is_int(id)]
+
+
+def get_bus_times_and_offsets(bus_listing):
+    offsets_times = [((int(id) - i) % int(id), int(id)) for i, id in
+                     enumerate(bus_listing.split(',')) if is_int(id)]
+    return sorted(offsets_times, key=lambda x: x[1], reverse=True)
 
 
 def is_int(s):
@@ -74,7 +69,7 @@ def main(input_file='input.txt'):
           multiply_bus_id_and_wait_time(earliest_departure,
                                         parse_bus_times(bus_ids)))
     print('Earliest valid timestamp (part 2): ',
-          find_earliest_timestamp(bus_ids, start_point=0))
+          find_earliest_timestamp(bus_ids))
 
 
 if __name__ == '__main__':
